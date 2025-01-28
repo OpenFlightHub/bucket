@@ -1,0 +1,31 @@
+env:
+  PROJECT_NAME: ofh-database
+
+name: create-production-database-clean
+on: [workflow_dispatch]
+jobs:
+  deploy:
+    runs-on: [server]
+    steps:
+      - run: echo "HOME=$(pwd)" >> $GITHUB_ENV #fix https://github.com/actions/runner/issues/1864
+
+      - name: Clean Workspace Folder
+        run: |
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+
+      - uses: actions/checkout@v4
+        with:
+          path: repo
+
+      - name: stop old docker container
+        run: |
+          docker stop ${{ env.PROJECT_NAME }} || true
+
+      - name: Remove old docker container and data
+        run: |
+          docker rm ${{ env.PROJECT_NAME }} || true
+          rm -rf /bucket_data
+
+      - name: Start new docker container
+        run: docker run -itd --restart unless-stopped -p 6003:9000 -p 6004:9001 --name ofh-bucket -v /bucket_data:/data -e MINIO_ROOT_USER=${{secrets.MINIO_ROOT_USER}} -e MINIO_ROOT_PASSWORD=${{secrets.MINIO_ROOT_PASSWORD}} quay.io/minio/minio server /data --console-address ":6005"
