@@ -1,7 +1,7 @@
 env:
-  PROJECT_NAME: ofh-database
+  PROJECT_NAME: ofh-bucket
 
-name: create-production-database-clean
+name: create-production-bucket-clean
 on: [workflow_dispatch]
 jobs:
   deploy:
