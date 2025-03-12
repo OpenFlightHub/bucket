@@ -28,4 +28,4 @@ jobs:
           rm -rf /bucket_data
 
       - name: Start new docker container
-        run: docker run -itd --restart unless-stopped -p 6003:6003 -p 6004:6004 -p 6005:6005 --name ofh-bucket -v /bucket_data:/data -e MINIO_ROOT_USER=${{secrets.MINIO_ROOT_USER}} -e MINIO_REGION="eu-1" -e MINIO_ROOT_PASSWORD=${{secrets.MINIO_ROOT_PASSWORD}} quay.io/minio/minio server /data --console-address ":6005"
+        run: docker run -itd --restart unless-stopped -p 6003:6003 -p 6004:6004 -p 6005:6005 --network=ofh --name ofh-bucket -v /bucket_data:/data -e MINIO_ROOT_USER=${{secrets.MINIO_ROOT_USER}} -e MINIO_REGION="eu-1" -e MINIO_ROOT_PASSWORD=${{secrets.MINIO_ROOT_PASSWORD}} quay.io/minio/minio server /data --console-address ":6005"
